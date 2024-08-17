@@ -13,7 +13,7 @@ function FigureData(){
     const [varianceCountError, setVarianceCountError] = useState("");
     const [durationData, setDurationData] = useState([]);
     const [durationDataError, setDurationDataError] = useState("");
-    const [countryData, setcountryData] = useState(undefined);
+    const [countryData, setcountryData] = useState([]);
     const [countryDataError, setCountryDataError] = useState("");
     const [colourData, setColourData] = useState([]);
     const [colourDataError, setColourDataError] = useState("");
@@ -117,6 +117,47 @@ function FigureData(){
             } catch (error){
                 setDurationDataError(error);
             }
+
+            let countryURL = ApiConstant.GarmentByCountry;
+            try{
+                let response = await fetch(countryURL, header);
+                if (response.status == 200){
+                    let r = await response.json();
+                    console.log(r.result);
+                    if (r.result !== undefined) {
+                        setcountryData(r.result);
+                        console.log(JSON.stringify(r));
+                        countryChart(r.result);
+                    }
+                    else {
+                        console.log('empty country data at CountryChart');
+                    }
+                } else {
+                    setCountryDataError("Error in country");
+                    setcountryData(undefined);
+                }
+            } catch (error){
+                setCountryDataError(error);
+            }
+
+            let brandURL = ApiConstant.GarmentByBrand;
+            try{
+                let response = await fetch(brandURL, header);
+                if (response.status == 200){
+                    let r = await response.json();
+                    console.log(r.result);
+                    if (r.result !== undefined) {
+                        setBrandData(r.result);
+                    } else {
+                        setBrandDataError("Unexpected response format");
+                    }
+                } else {
+                    setBrandDataError("Error in getting total user count");
+                    setBrandData(undefined);
+                }
+            } catch (error){
+                setBrandDataError(error);
+            }
         }
         else {
             console.error('token');
@@ -133,86 +174,48 @@ function FigureData(){
         return color;
     }
 
-    async function countryChart(chartRef) {
-        let countryURL = ApiConstant.GarmentByCountry;
-        try{
-            let response = await fetch(countryURL, header);
-            if (response.status == 200){
-                let r = await response.json();
-                console.log(r.result);
-                if (r.result !== undefined) {
-                    setcountryData(r.result);
-                    
-                } else {
-                    setCountryDataError("Unexpected response format");
-                }
-            } else {
-                setCountryDataError("Error in getting total user count");
-                setcountryData(undefined);
-            }
-        } catch (error){
-            setCountryDataError(error);
-        }
-        
-        
-        const ctx = chartRef.getContext('2d');
-        const labels = Object.keys(countryData);
-        const datas = Object.values(countryData);
+    async function countryChart(data) {
+        const ctx = chartRef.current.getContext('2d');
+        const labels = Object.keys(data);
+        const datas = Object.values(data);
         const count = labels.length;
 
-        const backgroundColor = Array.from({length:count}, () => getRandomHexColor());
-        const borderColor = Array.from({length:count}, ()=> getRandomHexColor());
+        const backgroundColor = Array.from({ length: count }, () =>getRandomHexColor());
+        const borderColor = Array.from({ length: count }, () =>getRandomHexColor());
+
         if (chartInstanceRef.current) {
-            chartInstanceRef.current.destroy();
+        chartInstanceRef.current.destroy();
         }
-        
-        alert(JSON.stringify(labels));
+
         chartInstanceRef.current = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: '# of Garment',
-                    data: datas,
-                    backgroundColor: backgroundColor,
-                    borderColor: borderColor,
-                    borderWidth: 1,
-                }],
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+            label: '# of Garments',
+            data: datas,
+            backgroundColor: backgroundColor,
+            borderColor: borderColor,
+            borderWidth: 1,
+            }],
+        },
+        options: {
+            responsive: true,
+            plugins: {
+            legend: {
+                position: 'top',
             },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    title: {
-                        display: true,
-                        text: 'Country Data Chart',
-                    },
-                },
+            title: {
+                display: true,
+                text: 'Country Data Chart',
             },
+            },
+        },
         });
     }
     
     async function brandChart(chartRef) {
-        let brandURL = ApiConstant.GarmentByBrand;
-        try{
-            let response = await fetch(brandURL, header);
-            if (response.status == 200){
-                let r = await response.json();
-                console.log(r.result);
-                if (r.result !== undefined) {
-                    setBrandData(r.result);
-                } else {
-                    setBrandDataError("Unexpected response format");
-                }
-            } else {
-                setBrandDataError("Error in getting total user count");
-                setBrandData(undefined);
-            }
-        } catch (error){
-            setBrandDataError(error);
-        }
+        
         const ctx = chartRef.getContext('2d');
         const labels = Object.keys(brandData);
         const datas = Object.values(brandData);
@@ -369,34 +372,32 @@ function FigureData(){
     //  [] to show only run once
     useEffect(() => {
         getTotalUserNumber();
-        if (chartRef.current){
-            countryChart(chartRef.current);
-        }
-        if (chartRef1.current){
-            brandChart(chartRef1.current);
-        }
-        if (chartRef2.current){
-            colourChart(chartRef2.current);
-        }
-        if(chartRef3.current){
-            sizeChart(chartRef3.current);
-        }
+        
+        // if (chartRef1.current){
+        //     brandChart(chartRef1.current);
+        // }
+        // if (chartRef2.current){
+        //     colourChart(chartRef2.current);
+        // }
+        // if(chartRef3.current){
+        //     sizeChart(chartRef3.current);
+        // }
 
         return () => {
             if (chartInstanceRef.current) {
                 chartInstanceRef.current.destroy();
             }
-            if (chartInstanceRef1.current) {
-                chartInstanceRef1.current.destroy();
-            }
-            if (chartInstanceRef2.current) {
-                chartInstanceRef2.current.destroy();
-            }
-            if (chartInstanceRef3.current) {
-                chartInstanceRef3.current.destroy();
-            }
+            // if (chartInstanceRef1.current) {
+            //     chartInstanceRef1.current.destroy();
+            // }
+            // if (chartInstanceRef2.current) {
+            //     chartInstanceRef2.current.destroy();
+            // }
+            // if (chartInstanceRef3.current) {
+            //     chartInstanceRef3.current.destroy();
+            // }
         };
-    }, []); // Run this effect when countryData changes
+    }, []);// Run this effect when countryData changes
     
 
     return (

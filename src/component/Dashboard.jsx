@@ -3,6 +3,7 @@ import { useHistory  } from "react-router-dom";
 import React, { useEffect, useState } from 'react';
 import '../Dashboard.css';
 import { FaSignOutAlt } from 'react-icons/fa';
+import FigureData from './FigureData.jsx';
 
 function Dashboard(){
     const history = useHistory();
@@ -50,6 +51,7 @@ function Dashboard(){
                 </button>
             </div>
         </nav>
+        <FigureData></FigureData>
        </>
     );
 }
