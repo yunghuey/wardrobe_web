@@ -25,11 +25,13 @@ function FigureData(){
     const chartRef1 = useRef(null);
     const chartRef2 = useRef(null);
     const chartRef3 = useRef(null);
+    const lineChartRef4 = useRef(null);
 
     const chartInstanceRef = useRef(null); 
     const chartInstanceRef1 = useRef(null); 
     const chartInstanceRef2 = useRef(null); 
     const chartInstanceRef3 = useRef(null); 
+    const lineChartInstanceRef4 = useRef(null);
 
     const history = useHistory ();
 
@@ -99,25 +101,6 @@ function FigureData(){
                 setVarianceCountError(error);
             }
             
-            let durationURL = ApiConstant.GarmentByDuration;
-            try{
-                let response = await fetch(durationURL, header);
-                if (response.status == 200){
-                    let r = await response.json();
-                    console.log(r.result);
-                    if (r.result !== undefined) {
-                        setDurationData(r.result);
-                    } else {
-                        setDurationDataError("Unexpected response format");
-                    }
-                } else {
-                    setDurationDataError("Error in getting total user count");
-                    setDurationData(undefined);
-                }
-            } catch (error){
-                setDurationDataError(error);
-            }
-
             let countryURL = ApiConstant.GarmentByCountry;
             try{
                 let response = await fetch(countryURL, header);
@@ -148,6 +131,7 @@ function FigureData(){
                     console.log(r.result);
                     if (r.result !== undefined) {
                         setBrandData(r.result);
+                        brandChart(r.result);
                     } else {
                         setBrandDataError("Unexpected response format");
                     }
@@ -157,6 +141,67 @@ function FigureData(){
                 }
             } catch (error){
                 setBrandDataError(error);
+            }
+            
+            let colourURL = ApiConstant.GarmentByColour;
+            try{
+                let response = await fetch(colourURL, header);
+                if (response.status == 200){
+                    let r = await response.json();
+                    console.log(r.result);
+                    if (r.result !== undefined) {
+                        setColourData(r.result);
+                        colourChart(r.result);
+                    } else {
+                        setColourDataError("Unexpected response format");
+                    }
+                } else {
+                    setColourDataError("Error in getting total user count");
+                    setColourData(undefined);
+                }
+            } catch (error){
+                setColourDataError(error);
+            }
+            
+            let sizeURL = ApiConstant.GarmentBySize;
+            try{
+                let response = await fetch(sizeURL, header);
+                if (response.status == 200){
+                    let r = await response.json();
+                    console.log(r.result);
+                    if (r.result !== undefined) {
+                        setSizeData(r.result);
+                        sizeChart(r.result);
+                    } else {
+                        setSizeDataError("Unexpected response format");
+                    }
+                } else {
+                    setSizeDataError("Error in getting total user count");
+                    setSizeData(undefined);
+                }
+            } catch (error){
+                setSizeDataError(error);
+            }
+            
+            let durationURL = ApiConstant.GarmentByDuration;
+            try{
+                let response = await fetch(durationURL, header);
+                if (response.status == 200){
+                    let r = await response.json();
+                    console.log(r.result);
+                    if (r.result !== undefined) {
+                        console.log(r.result);
+                        setDurationData(r.result);
+                        durationChart(r.result);
+                    } else {
+                        setDurationDataError("Unexpected response format");
+                    }
+                } else {
+                    setDurationDataError("Error in getting total user count");
+                    setDurationData(undefined);
+                }
+            } catch (error){
+                setDurationDataError(error);
             }
         }
         else {
@@ -174,7 +219,7 @@ function FigureData(){
         return color;
     }
 
-    async function countryChart(data) {
+    function countryChart(data) {
         const ctx = chartRef.current.getContext('2d');
         const labels = Object.keys(data);
         const datas = Object.values(data);
@@ -184,188 +229,193 @@ function FigureData(){
         const borderColor = Array.from({ length: count }, () =>getRandomHexColor());
 
         if (chartInstanceRef.current) {
-        chartInstanceRef.current.destroy();
+            chartInstanceRef.current.destroy();
         }
 
         chartInstanceRef.current = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: labels,
-            datasets: [{
-            label: '# of Garments',
-            data: datas,
-            backgroundColor: backgroundColor,
-            borderColor: borderColor,
-            borderWidth: 1,
-            }],
-        },
-        options: {
-            responsive: true,
-            plugins: {
-            legend: {
-                position: 'top',
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                label: '# of Garments',
+                data: datas,
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
+                borderWidth: 1,
+                }],
             },
-            title: {
-                display: true,
-                text: 'Country Data Chart',
+            options: {
+                responsive: true,
+                plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Country Data Chart',
+                },
+                },
             },
-            },
-        },
         });
     }
-    
-    async function brandChart(chartRef) {
-        
-        const ctx = chartRef.getContext('2d');
-        const labels = Object.keys(brandData);
-        const datas = Object.values(brandData);
+
+    function brandChart(data) {
+        const ctx = chartRef1.current.getContext('2d');
+        const labels = Object.keys(data);
+        const datas = Object.values(data);
         const count = labels.length;
 
-        const backgroundColor = Array.from({length:count}, () => getRandomHexColor());
-        const borderColor = Array.from({length:count}, ()=> getRandomHexColor());
+        const backgroundColor = Array.from({ length: count }, () =>getRandomHexColor());
+        const borderColor = Array.from({ length: count }, () =>getRandomHexColor());
+
         if (chartInstanceRef1.current) {
             chartInstanceRef1.current.destroy();
         }
-    
+
         chartInstanceRef1.current = new Chart(ctx, {
             type: 'pie',
             data: {
                 labels: labels,
                 datasets: [{
-                    label: '# of Garment',
-                    data: datas,
-                    backgroundColor: backgroundColor,
-                    borderColor: borderColor,
-                    borderWidth: 1,
+                label: '# of Garments',
+                data: datas,
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
+                borderWidth: 1,
                 }],
             },
             options: {
                 responsive: true,
                 plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    title: {
-                        display: true,
-                        text: 'Brand Data Chart',
-                    },
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Brand Data Chart',
+                },
                 },
             },
         });
     }
-
-    async function colourChart(chartRef) {
-        let colourURL = ApiConstant.GarmentByColour;
-        try{
-            let response = await fetch(colourURL, header);
-            if (response.status == 200){
-                let r = await response.json();
-                console.log(r.result);
-                if (r.result !== undefined) {
-                    setColourData(r.result);
-                } else {
-                    setColourDataError("Unexpected response format");
-                }
-            } else {
-                setColourDataError("Error in getting total user count");
-                setColourData(undefined);
-            }
-        } catch (error){
-            setColourDataError(error);
-        }
-        const ctx = chartRef.getContext('2d');
-        const labels = Object.keys(colourData);
-        const datas = Object.values(colourData);
+ 
+    function colourChart(data) {
+        const ctx = chartRef2.current.getContext('2d');
+        const labels = Object.keys(data);
+        const datas = Object.values(data);
         const count = labels.length;
 
-        const backgroundColor = Array.from({length:count}, () => getRandomHexColor());
-        const borderColor = Array.from({length:count}, ()=> getRandomHexColor());
+        const backgroundColor = Array.from({ length: count }, () =>getRandomHexColor());
+        const borderColor = Array.from({ length: count }, () =>getRandomHexColor());
+
         if (chartInstanceRef2.current) {
             chartInstanceRef2.current.destroy();
         }
-    
+
         chartInstanceRef2.current = new Chart(ctx, {
             type: 'pie',
             data: {
                 labels: labels,
                 datasets: [{
-                    label: '# of Garment',
-                    data: datas,
-                    backgroundColor: backgroundColor,
-                    borderColor: borderColor,
-                    borderWidth: 1,
+                label: '# of Garments',
+                data: datas,
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
+                borderWidth: 1,
                 }],
             },
             options: {
                 responsive: true,
                 plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    title: {
-                        display: true,
-                        text: 'Garment Colour Data Chart',
-                    },
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Colour Data Chart',
+                },
                 },
             },
         });
     }
 
-    async function sizeChart(chartRef) {
-        let sizeURL = ApiConstant.GarmentBySize;
-        try{
-            let response = await fetch(sizeURL, header);
-            if (response.status == 200){
-                let r = await response.json();
-                console.log(r.result);
-                if (r.result !== undefined) {
-                    setSizeData(r.result);
-                } else {
-                    setSizeDataError("Unexpected response format");
-                }
-            } else {
-                setSizeDataError("Error in getting total user count");
-                setSizeData(undefined);
-            }
-        } catch (error){
-            setSizeDataError(error);
-        }
-
-        const ctx = chartRef.getContext('2d');
-        const labels = Object.keys(sizeData);
-        const datas = Object.values(sizeData);
+    function sizeChart(data) {
+        const ctx = chartRef3.current.getContext('2d');
+        const labels = Object.keys(data);
+        const datas = Object.values(data);
         const count = labels.length;
 
-        const backgroundColor = Array.from({length:count}, () => getRandomHexColor());
-        const borderColor = Array.from({length:count}, ()=> getRandomHexColor());
+        const backgroundColor = Array.from({ length: count }, () =>getRandomHexColor());
+        const borderColor = Array.from({ length: count }, () =>getRandomHexColor());
+
         if (chartInstanceRef3.current) {
             chartInstanceRef3.current.destroy();
         }
-    
+
         chartInstanceRef3.current = new Chart(ctx, {
             type: 'pie',
             data: {
                 labels: labels,
                 datasets: [{
-                    label: '# of Garment',
-                    data: datas,
-                    backgroundColor: backgroundColor,
-                    borderColor: borderColor,
-                    borderWidth: 1,
+                label: '# of Garments',
+                data: datas,
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
+                borderWidth: 1,
                 }],
             },
             options: {
                 responsive: true,
                 plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    title: {
-                        display: true,
-                        text: 'Garment Size Data Chart',
-                    },
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Size Data Chart',
+                },
                 },
             },
+        });
+    }
+
+    function durationChart(data){
+        const ctx = lineChartRef4.current.getContext('2d');
+        const labels = data.map(item => item.date);
+        const numbers = data.map(item => item.count);
+        if (lineChartInstanceRef4.current){
+            lineChartInstanceRef4.current.destroy();
+        }
+        lineChartInstanceRef4.current = new Chart(ctx, {
+            type : 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "# of Garment",
+                    data: numbers,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderWidth: 1,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                  x: {
+                    title: {
+                      display: true,
+                      text: 'Date'
+                    }
+                  },
+                  y: {
+                    title: {
+                      display: true,
+                      text: 'Count'
+                    },
+                    beginAtZero: true
+                  }
+                }
+              }
         });
     }
 
@@ -373,11 +423,9 @@ function FigureData(){
     useEffect(() => {
         getTotalUserNumber();
         
-        // if (chartRef1.current){
-        //     brandChart(chartRef1.current);
-        // }
+        
+        colourChart(chartRef2.current);
         // if (chartRef2.current){
-        //     colourChart(chartRef2.current);
         // }
         // if(chartRef3.current){
         //     sizeChart(chartRef3.current);
@@ -387,9 +435,9 @@ function FigureData(){
             if (chartInstanceRef.current) {
                 chartInstanceRef.current.destroy();
             }
-            // if (chartInstanceRef1.current) {
-            //     chartInstanceRef1.current.destroy();
-            // }
+            if (chartInstanceRef1.current) {
+                chartInstanceRef1.current.destroy();
+            }
             // if (chartInstanceRef2.current) {
             //     chartInstanceRef2.current.destroy();
             // }
@@ -410,9 +458,10 @@ function FigureData(){
                     <div className="row g-4 mb-4">
                         <div className="col-md-6">
                             {totalUser ? (
-                                <div className="p-4 bg-info text-white shadow-sm rounded d-flex justify-content-between align-items-center">
+                                <div className="p-3 text-white shadow-sm rounded d-flex justify-content-between align-items-center" 
+                                style={{ backgroundColor: 'rgba(131, 32, 201, 0.72)' }}>
                                     <div>
-                                        <span className="fs-4">Total Users</span><br />
+                                        <span className="fs-5">Total Users</span><br />
                                         <span className="fs-2">{totalUser}</span>
                                     </div>
                                     <FaUsers className="fs-2"/>
@@ -427,9 +476,10 @@ function FigureData(){
                         </div>
                         <div className="col-md-6">
                             {totalGarment ? (
-                                <div className="p-4 bg-success text-white shadow-sm rounded d-flex justify-content-between align-items-center">
+                                <div className="p-3 text-dark shadow-sm rounded d-flex justify-content-between align-items-center"
+                                style={{backgroundColor:'#E6C53F'}}>
                                     <div>
-                                        <span className="fs-4">Total Garments</span><br />
+                                        <span className="fs-5">Total Garments</span><br />
                                         <span className="fs-2">{totalGarment}</span>
                                     </div>
                                     <FaTshirt className="fs-2"/>
@@ -447,7 +497,8 @@ function FigureData(){
                     <div className="row g-4 justify-content-between">
                         <div className="col-md-3">
                             {varianceCount["total_colors"] ? (
-                                <div className="p-4 bg-primary text-white shadow-sm rounded d-flex justify-content-between align-items-center">
+                                <div className="p-3 text-dark shadow-sm rounded d-flex justify-content-between align-items-center"
+                                style={{backgroundColor: '#E7DDFF'}}>
                                     <div>
                                         <span className="fs-5">Total Colours</span><br />
                                         <span className="fs-3">{varianceCount["total_colors"]}</span>
@@ -456,7 +507,7 @@ function FigureData(){
                                 </div>
                             ) : (
                                 varianceCountError && (
-                                    <div className="p-4 bg-danger text-white shadow-sm rounded  align-items-center">
+                                    <div className="p-3 bg-danger text-white shadow-sm rounded  align-items-center">
                                         <span className="fs-4">Error: {varianceCountError}</span>
                                     </div>
                                 )
@@ -464,7 +515,8 @@ function FigureData(){
                         </div>
                         <div className="col-md-3">
                             {varianceCount["total_brands"] ? (
-                                <div className="p-4 bg-dark text-white shadow-sm rounded d-flex justify-content-between align-items-center">
+                                <div className="p-3 text-dark shadow-sm rounded d-flex justify-content-between align-items-center"
+                                style={{backgroundColor: '#FFECA1'}}>
                                     <div>
                                         <span className="fs-5">Total Brands</span><br />
                                         <span className="fs-3">{varianceCount["total_brands"]}</span>
@@ -473,7 +525,7 @@ function FigureData(){
                                 </div>
                             ) : (
                                 varianceCountError && (
-                                    <div className="p-4 bg-danger text-white shadow-sm rounded  align-items-center">
+                                    <div className="p-3 bg-danger text-white shadow-sm rounded  align-items-center">
                                         <span className="fs-4">Error: {varianceCountError}</span>
                                     </div>
                                 )
@@ -481,7 +533,8 @@ function FigureData(){
                         </div>
                         <div className="col-md-3">
                             {varianceCount["total_countries"] ? (
-                                <div className="p-4 bg-primary text-white shadow-sm rounded d-flex justify-content-between align-items-center">
+                                <div className="p-3 text-dark shadow-sm rounded d-flex justify-content-between align-items-center"
+                                style={{backgroundColor: '#EFC3CA'}}>
                                     <div>
                                         <span className="fs-5">Total Countries</span><br />
                                         <span className="fs-3">{varianceCount["total_countries"]}</span>
@@ -490,7 +543,7 @@ function FigureData(){
                                 </div>
                             ) : (
                                 varianceCountError && (
-                                    <div className="p-4 bg-danger text-white shadow-sm rounded  align-items-center">
+                                    <div className="p-3 bg-danger text-white shadow-sm rounded  align-items-center">
                                         <span className="fs-4">Error: {varianceCountError}</span>
                                     </div>
                                 )
@@ -498,7 +551,8 @@ function FigureData(){
                         </div>
                         <div className="col-md-3">
                             {varianceCount["total_sizes"] ? (
-                                <div className="p-4 bg-dark text-white shadow-sm rounded d-flex justify-content-between align-items-center">
+                                <div className="p-3 text-dark shadow-sm rounded d-flex justify-content-between align-items-center"
+                                style={{backgroundColor: '#98F5F9'}}>
                                     <div>
                                         <span className="fs-5">Total Sizes</span><br />
                                         <span className="fs-3">{varianceCount["total_sizes"]}</span>
@@ -507,7 +561,7 @@ function FigureData(){
                                 </div>
                             ) : (
                                 varianceCountError && (
-                                    <div className="p-4 bg-danger text-white shadow-sm rounded  align-items-center">
+                                    <div className="p-3 bg-danger text-white shadow-sm rounded  align-items-center">
                                         <span className="fs-4">Error: {varianceCountError}</span>
                                     </div>
                                 )
@@ -518,60 +572,42 @@ function FigureData(){
             </div>
 
             {/* display the piechart */}
-            <div className="card mt-2">
-                <div style={{ width: '400px', height: '400px' }}>
-                    <canvas ref={chartRef} width={500} height={500}/>
-                </div>                
+            <div className="card m-3 shadow">
+                <div className="card-body">
+                    <div className="row justify-content-center">
+                        <div style={{ width: '400px', height: '400px' }}>
+                            <canvas ref={chartRef} width={500} height={500}/>
+                        </div>                
+                        <div style={{ width: '400px', height: '400px' }}>
+                            <canvas ref={chartRef1} width={500} height={500}/>
+                        </div>                
+                    </div>
+                    <div className="row justify-content-center">
+                        <div style={{ width: '400px', height: '400px' }}>
+                            <canvas ref={chartRef2} width={500} height={500}/>
+                        </div> 
+                        <div style={{ width: '400px', height: '400px' }}>
+                            <canvas ref={chartRef3} width={500} height={500}/>
+                        </div>    
+                    </div>                
+                </div>
             </div>
 
-            {/* <div className="card mt-2">
-                <div style={{ width: '400px', height: '400px' }}>
-                    <canvas ref={chartRef1} width={500} height={500}/>
-                </div>                
-            </div> */}
-
-            {/* <div className="card mt-2">
-                <div style={{ width: '400px', height: '400px' }}>
-                    <canvas ref={chartRef2} width={500} height={500}/>
-                </div>                
-            </div> */}
-
-            {/* <div className="card mt-2">
-                <div style={{ width: '400px', height: '400px' }}>
-                    <canvas ref={chartRef3} width={500} height={500}/>
-                </div>                
-            </div> */}
-
-            {durationData && (
-                    <div>
-                    <span>Duration data: { JSON.stringify(durationData) }</span><br/>
+            {/* display line chart */}
+            <div className="card m-3 shadow"> 
+                <div className="card-body">
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <button type="button" class="btn btn-primary">One week</button>
+                        <button type="button" class="btn btn-primary">Two weeks</button>
+                        <button type="button" class="btn btn-primary">One month</button>
                     </div>
-                )}
-
-                {countryData && (
-                    <div>
-                    <span>Country data: { JSON.stringify(countryData) }</span><br/>
+                    <div className="row justify-content-center">
+                        <div style={{ height: '400px' }}>
+                            <canvas ref={lineChartRef4} width={500} height={500}/>
+                        </div>    
                     </div>
-                )}
-
-                {colourData && (
-                    <div>
-                    <span>Colour data: { JSON.stringify(colourData) }</span><br/>
-                    </div>
-                )}
-
-                {brandData && (
-                    <div>
-                    <span>Brand data: { JSON.stringify(brandData) }</span><br/>
-                    </div>
-                )}
-
-                {sizeData && (
-                    <div>
-                    <span>Size data: { JSON.stringify(sizeData) }</span><br/>
-                    </div>
-                )}
-                
+                </div>
+            </div>  
         </div>
           
         </>

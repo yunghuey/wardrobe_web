@@ -42,8 +42,8 @@ function Dashboard(){
 
     return  (
         <>
-        <nav className="navbar bg-body-tertiary">
-            <div className="container">
+        <nav className="navbar " style={{backgroundColor: '#F0DEFE'}}>
+            <div className="container" >
                 <h2 className="navbar-brand">Cloth Loom Dashboard</h2>
                 <button className="btn d-flex" onClick={logout}>
                     <FaSignOutAlt style={{ marginRight: '10px', marginTop: '4px'}}/>
