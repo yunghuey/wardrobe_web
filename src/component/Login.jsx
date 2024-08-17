@@ -11,8 +11,11 @@ function Login() {
     const history = useHistory ();
 
     async function login() {
+        if (isLoading) return;
+
         setIsLoading(true);
         if (username.length == 0 || password.length == 0){
+            setIsLoading(false);
             return setMessage("Please fill up the form");
         }
         let url = ApiConstant.LoginURL;
@@ -31,7 +34,6 @@ function Login() {
             if (response.status == 200){
                 let result = await response.json();
                 let token = result.token.replace(/^"|"$/g, '');
-                alert(token);
                 localStorage.setItem("token", token); // Assuming 'result' contains login status/token
                 history.push("/dashboard");
             }
@@ -42,6 +44,7 @@ function Login() {
                 setMessage("Unexpected error occured. Please try again");
             }
         }catch (error) {
+            console.log(`error: ${error.message} stake trace ${error.stack}`);
             alert(`error: ${error.message} stake trace ${error.stack}`);
         }finally{
             setIsLoading(false);

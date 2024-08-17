@@ -2,6 +2,7 @@ import { ApiConstant } from "../repository/ApiConstant.js";
 import { useHistory  } from "react-router-dom";
 import React, { useEffect, useState } from 'react';
 import '../Dashboard.css';
+import { FaSignOutAlt } from 'react-icons/fa';
 
 function Dashboard(){
     const history = useHistory();
@@ -40,10 +41,16 @@ function Dashboard(){
 
     return  (
         <>
-        <h2>Dashboard at here</h2>
-        <a href="#" className="nav-link" onClick={logout}>Logout</a>
-        </>
-
+        <nav className="navbar bg-body-tertiary">
+            <div className="container">
+                <h2 className="navbar-brand">Cloth Loom Dashboard</h2>
+                <button className="btn d-flex" onClick={logout}>
+                    <FaSignOutAlt style={{ marginRight: '10px', marginTop: '4px'}}/>
+                    <a href="#" className="nav-link" onClick={logout}>Logout</a>
+                </button>
+            </div>
+        </nav>
+       </>
     );
 }
 export default Dashboard;
