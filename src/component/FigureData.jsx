@@ -1,27 +1,25 @@
 import { ApiConstant } from "../repository/ApiConstant.js";
 import React , { useEffect, useState, useRef  } from 'react';
 import { useHistory  } from "react-router-dom";
-import { FaUsers, FaTshirt, FaPalette, FaTags, FaGlobe, FaRulerCombined } from 'react-icons/fa';
+import { FaUsers, FaTshirt, FaPalette, FaTags, FaGlobe, FaRulerCombined,FaChevronUp,FaChevronDown   } from 'react-icons/fa';
 import Chart from "chart.js/auto";
 
 function FigureData(){
-    const [totalUser, setTotalUser] = useState(0);
+    const colour_name = ['RED', 'PURPLE', 'PINK', 'BLUE', 'BLUE GREEN', 'GREEN', 'YELLOW', 'ORANGE','WHITE','BLACK', 'GREY', 'BROWN', 'BEIGE', 'MULTI COLOUR'];
+    const colour_code = ['#ff0000', '#800080', '#ffc0cb', '#0000ff', '#0d98ba', '#008000', '#ffff00', '#ffa500','#ffffff','#000000', '#808080', '#8b4513', '#f5f5dc', '#ffffff'];
+
+    const [totalUser, setTotalUser] = useState([]);
     const [totalUserError, setTotalUserError] = useState("");
-    const [totalGarment, setTotalGarment] = useState(0);
     const [totalGarmentError, setTotalGarmentError] = useState("");
     const [varianceCount, setVarianceCount] = useState([]);
     const [varianceCountError, setVarianceCountError] = useState("");
-    const [durationData, setDurationData] = useState([]);
-    const [durationDataError, setDurationDataError] = useState("");
-    const [countryData, setcountryData] = useState([]);
-    const [countryDataError, setCountryDataError] = useState("");
-    const [colourData, setColourData] = useState([]);
-    const [colourDataError, setColourDataError] = useState("");
-    const [sizeData, setSizeData] = useState([]);
-    const [sizeDataError, setSizeDataError] = useState("");
-    const [brandData, setBrandData] = useState([]);
-    const [brandDataError, setBrandDataError] = useState("");
     const [durationString, setDurationString] = useState(1);
+    
+    const [topColour, setTopColour] = useState([]);
+    const [topBrand, setTopBrand] = useState([]);
+    const [topCountry, setTopCountry] = useState([]);
+    const [topSize, setTopSize] = useState([]);
+
     const chartRef = useRef(null);
     const chartRef1 = useRef(null);
     const chartRef2 = useRef(null);
@@ -33,6 +31,37 @@ function FigureData(){
     const chartInstanceRef2 = useRef(null); 
     const chartInstanceRef3 = useRef(null); 
     const lineChartInstanceRef4 = useRef(null);
+
+    const [isCollapsedGarment, setIsCollapsedGarment] = useState(false);
+    const handleGarmentToggle = () => {
+        setIsCollapsedGarment(!isCollapsedGarment);
+    }
+
+    const [isCollapsedUser, setIsCollapsedUser] = useState(false);
+    const handleUserToggle = () => {
+        setIsCollapsedUser(!isCollapsedUser);
+    }
+
+    const [isCollapsedCountry, setIsCollapsedCountry] = useState(false);
+    const handleCountryToggle = () => {
+        setIsCollapsedCountry(!isCollapsedCountry);
+    }
+
+    const [isCollapsedColour, setIsCollapsedColour] = useState(false);
+    const handleColourToggle = () => {
+        setIsCollapsedColour(!isCollapsedColour);
+    }
+
+    const [isCollapsedSize, setIsCollapsedSize] = useState(false);
+    const handleSizeToggle = () => {
+        setIsCollapsedSize(!isCollapsedSize);
+    }
+
+    const [isCollapsedBrand, setIsCollapsedBrand] = useState(false);
+    const handleBrandToggle = () => {
+        setIsCollapsedBrand(!isCollapsedBrand);
+    }
+
 
     const history = useHistory ();
 
@@ -53,7 +82,8 @@ function FigureData(){
                 if (userResponse.status == 200){
                     let r = await userResponse.json();
                     if (r.total_user !== undefined) {
-                        setTotalUser(r.total_user);
+                        setTotalUser(r);
+
                     } else {
                         setTotalUserError("Unexpected response format");
                     }
@@ -74,6 +104,7 @@ function FigureData(){
                     console.log(r.result);
                     if (r.result !== undefined) {
                         setVarianceCount(r.result);
+                        console.log(r.result);
                     } else {
                         setTotalGarmentError("Unexpected response format");
                     }
@@ -85,88 +116,27 @@ function FigureData(){
                 setVarianceCountError(error);
             }
             
-            let countryURL = ApiConstant.GarmentByCountry;
+            let categoryURL = ApiConstant.GarmentByCategory;
             try{
-                let response = await fetch(countryURL, header);
+                let response = await fetch(categoryURL, header);
                 if (response.status == 200){
                     let r = await response.json();
                     console.log(r.result);
                     if (r.result !== undefined) {
-                        setcountryData(r.result);
-                        console.log(JSON.stringify(r));
-                        countryChart(r.result);
-                    }
-                    else {
-                        console.log('empty country data at CountryChart');
-                    }
-                } else {
-                    setCountryDataError("Error in country");
-                    setcountryData(undefined);
-                }
-            } catch (error){
-                setCountryDataError(error);
-            }
-
-            let brandURL = ApiConstant.GarmentByBrand;
-            try{
-                let response = await fetch(brandURL, header);
-                if (response.status == 200){
-                    let r = await response.json();
-                    console.log(r.result);
-                    if (r.result !== undefined) {
-                        setBrandData(r.result);
-                        brandChart(r.result);
-                    } else {
-                        setBrandDataError("Unexpected response format");
+                        countryChart(r.result['country']);
+                        brandChart(r.result['brand']);
+                        colourChart(r.result['colour']);
+                        sizeChart(r.result['size']);
+                        setTopColour(r.result['top_colour']);
+                        setTopSize(r.result['top_size']);
+                        setTopCountry(r.result['top_country']);
+                        setTopBrand(r.result['top_brand']);
                     }
                 } else {
-                    setBrandDataError("Error in getting total user count");
-                    setBrandData(undefined);
                 }
             } catch (error){
-                setBrandDataError(error);
+                alert('error')
             }
-            
-            let colourURL = ApiConstant.GarmentByColour;
-            try{
-                let response = await fetch(colourURL, header);
-                if (response.status == 200){
-                    let r = await response.json();
-                    console.log(r.result);
-                    if (r.result !== undefined) {
-                        setColourData(r.result);
-                        colourChart(r.result);
-                    } else {
-                        setColourDataError("Unexpected response format");
-                    }
-                } else {
-                    setColourDataError("Error in getting total user count");
-                    setColourData(undefined);
-                }
-            } catch (error){
-                setColourDataError(error);
-            }
-            
-            let sizeURL = ApiConstant.GarmentBySize;
-            try{
-                let response = await fetch(sizeURL, header);
-                if (response.status == 200){
-                    let r = await response.json();
-                    console.log(r.result);
-                    if (r.result !== undefined) {
-                        setSizeData(r.result);
-                        sizeChart(r.result);
-                    } else {
-                        setSizeDataError("Unexpected response format");
-                    }
-                } else {
-                    setSizeDataError("Error in getting total user count");
-                    setSizeData(undefined);
-                }
-            } catch (error){
-                setSizeDataError(error);
-            }
-            
         }
     }
 
@@ -193,33 +163,39 @@ function FigureData(){
         }
 
         chartInstanceRef.current = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: labels,
-                datasets: [{
-                label: '# of Garments',
-                data: datas,
-                backgroundColor: backgroundColor,
-                borderColor: borderColor,
-                borderWidth: 1,
-                }],
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                legend: {
-                    position: 'top',
+            type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "# of Garment",
+                        data: datas,
+                        backgroundColor: backgroundColor,
+                        borderColor: '#FDDFFF',
+                        borderWidth: 1,
+                        fill: true
+                    }]
                 },
-                title: {
-                    display: true,
-                    text: 'Country Data Chart',
-                    font: {
-                        size: 24,
-                        weight: "bold"
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Count'
+                            },
+                            ticks: {
+                                stepSize: 1
+                            },
+                            beginAtZero: true
+                        }
                     }
-                },
-                },
-            },
+                }
         });
     }
 
@@ -237,77 +213,91 @@ function FigureData(){
         }
 
         chartInstanceRef1.current = new Chart(ctx, {
-            type: 'pie',
+            type: 'bar',
             data: {
                 labels: labels,
                 datasets: [{
-                label: '# of Garments',
-                data: datas,
-                backgroundColor: backgroundColor,
-                borderColor: borderColor,
-                borderWidth: 1,
-                }],
+                    label: "# of Garment",
+                    data: datas,
+                    backgroundColor: backgroundColor,
+                    borderColor: '#FDDFFF',
+                    borderWidth: 1,
+                    fill: true
+                }]
             },
             options: {
                 responsive: true,
-                plugins: {
-                legend: {
-                    position: 'top',
-                },
-                title: {
-                    display: true,
-                    text: 'Brand Data Chart',
-                    font: {
-                        size: 24,
-                        weight: "bold"
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Count'
+                        },
+                        ticks: {
+                            stepSize: 1
+                        },
+                        beginAtZero: true
                     }
-                },
-                },
-            },
+                }
+            }
         });
     }
  
     function colourChart(data) {
+        
         const ctx = chartRef2.current.getContext('2d');
         const labels = Object.keys(data);
         const datas = Object.values(data);
-        const count = labels.length;
 
-        const backgroundColor = Array.from({ length: count }, () =>getRandomHexColor());
-        const borderColor = Array.from({ length: count }, () =>getRandomHexColor());
+        const colourMapping = labels.map(label => {
+            const index = colour_name.indexOf(label.toUpperCase());
+            return index !== -1 ?colour_code[index] : '#000000';
+        });
 
         if (chartInstanceRef2.current) {
             chartInstanceRef2.current.destroy();
         }
 
         chartInstanceRef2.current = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: labels,
-                datasets: [{
-                label: '# of Garments',
-                data: datas,
-                backgroundColor: backgroundColor,
-                borderColor: borderColor,
-                borderWidth: 1,
-                }],
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                legend: {
-                    position: 'top',
+            type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "# of Garment",
+                        data: datas,
+                        backgroundColor: colourMapping,
+                        borderColor: '#FDDFFF',
+                        borderWidth: 1,
+                        fill: true
+                    }]
                 },
-                title: {
-                    display: true,
-                    text: 'Colour Data Chart',
-                    font: {
-                        size: 24,
-                        weight: "bold"
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Count'
+                            },
+                            ticks: {
+                                stepSize: 1
+                            },
+                            beginAtZero: true
+                        }
                     }
-                },
-                },
-            },
+                }
         });
     }
 
@@ -318,40 +308,46 @@ function FigureData(){
         const count = labels.length;
 
         const backgroundColor = Array.from({ length: count }, () =>getRandomHexColor());
-        const borderColor = Array.from({ length: count }, () =>getRandomHexColor());
+        // const borderColor = Array.from({ length: count }, () =>getRandomHexColor());
 
         if (chartInstanceRef3.current) {
             chartInstanceRef3.current.destroy();
         }
 
         chartInstanceRef3.current = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: labels,
-                datasets: [{
-                label: '# of Garments',
-                data: datas,
-                backgroundColor: backgroundColor,
-                borderColor: borderColor,
-                borderWidth: 1,
-                }],
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                legend: {
-                    position: 'top',
+            type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "# of Garment",
+                        data: datas,
+                        backgroundColor: backgroundColor,
+                        borderColor: '#FDDFFF',
+                        borderWidth: 1,
+                        fill: true
+                    }]
                 },
-                title: {
-                    display: true,
-                    text: 'Size Data Chart',
-                    font: {
-                        size: 24,
-                        weight: "bold"
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Count'
+                            },
+                            ticks: {
+                                stepSize: 1
+                            },
+                            beginAtZero: true
+                        }
                     }
-                },
-                },
-            },
+                }
         });
     }
 
@@ -373,35 +369,33 @@ function FigureData(){
             if (response.status === 200) {
                 let r = await response.json();
                 console.log(JSON.stringify(r.result));
-                setDurationData(r.result);
-                lineChart(r.result);
-            } else {
-                setDurationDataError("Error in getting duration data");
-                setDurationData(undefined);
-            }
+                durationBarChart(r.result);
+            } 
         } catch (error) {
-            setDurationDataError(error.toString());
         }
     }
 
-    function lineChart(data){
+    function durationBarChart(data){
         try{    
             const ctx = lineChartRef4.current.getContext('2d');
             const labels = data.map(item => item.date);
             const numbers = data.map(item => item.count);
-            
+            const count = labels.length
+            const backgroundColor = Array.from({ length: count }, () =>getRandomHexColor());
+
             if (lineChartInstanceRef4.current) {
                 lineChartInstanceRef4.current.destroy();
             }
             
             lineChartInstanceRef4.current = new Chart(ctx, {
-                type: 'line',
+                type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [{
                         label: "# of Garment",
                         data: numbers,
-                        backgroundColor: '#FDDFFF',
+                        backgroundColor: backgroundColor,
+                        borderColor: '#FDDFFF',
                         borderWidth: 1,
                         fill: true
                     }]
@@ -466,15 +460,18 @@ function FigureData(){
             <div className="card m-3 shadow">
                 <div className="card-body">
                     <div className="row g-4 mb-4">
-                        <div className="col-md-6">
+                        {/* user detail */}
+                        <div className="col-md-6"
+                        data-bs-toggle="collapse" data-bs-target="#userDetails" aria-expanded="false" aria-controls="userDetails" onClick={handleUserToggle}>
                             {totalUser ? (
                                 <div className="p-3 text-white shadow-sm rounded d-flex justify-content-between align-items-center" 
                                 style={{ backgroundColor: 'rgba(131, 32, 201, 0.72)' }}>
+                                    <FaUsers className="fs-2"/>
                                     <div>
                                         <span className="fs-5">Total Users</span><br />
-                                        <span className="fs-2">{totalUser}</span>
+                                        <span className="fs-2">{totalUser['total_user']}</span>
                                     </div>
-                                    <FaUsers className="fs-2"/>
+                                    <span className="fs-3">{totalUser['growth_rate']} %</span>
                                 </div>
                             ) : (
                                 totalUserError && (
@@ -483,16 +480,32 @@ function FigureData(){
                                     </div>
                                 )
                             )}
+                            <div className="collapse mt-2" id="userDetails">
+                                <div className="card card-body">
+                                    {
+                                        totalUser['growth_rate'] === 0 ? (
+                                            <span>There is no increase or decrease of user in this month</span>
+                                        ) : totalUser['growth_rate'] > 0 ? (
+                                            <span>There is total increase of {totalUser['growth_rate']}%</span>
+                                        ) : (
+                                            <span>There is drop of {totalUser['growth_rate']}% for our new user</span>
+                                        )
+                                    }
+                                </div>
+                            </div>
                         </div>
-                        <div className="col-md-6">
+                        {/* garment detail */}
+                        <div className="col-md-6" 
+                        data-bs-toggle="collapse" data-bs-target="#garmentDetails" aria-expanded="false" aria-controls="garmentDetails" onClick={handleGarmentToggle}>
                             {varianceCount["total_garments"] ? (
                                 <div className="p-3 text-dark shadow-sm rounded d-flex justify-content-between align-items-center"
                                 style={{backgroundColor:'#E6C53F'}}>
+                                    <FaTshirt className="fs-2"/>
                                     <div>
                                         <span className="fs-5">Total Garments</span><br />
                                         <span className="fs-2">{varianceCount['total_garments']}</span>
                                     </div>
-                                    <FaTshirt className="fs-2"/>
+                                    {isCollapsedGarment ? <FaChevronUp className="fs-4"/>: <FaChevronDown className="fs-4"/>}
                                 </div>
                             ) : (
                                 totalGarmentError && (
@@ -501,19 +514,29 @@ function FigureData(){
                                     </div>
                                 )
                             )}
+                            <div className="collapse mt-2" id="garmentDetails">
+                                <div className="card card-body">
+                                    Total number of new garment in this month: {varianceCount['new_garment_month']}
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <div className="row g-4 justify-content-between">
-                        <div className="col-md-3">
+                        {/* colour details */}
+                        <div className="col-md-3"
+                        data-bs-toggle="collapse" data-bs-target="#colourDetails" aria-expanded="false" aria-controls="colourDetails" onClick={handleColourToggle}>
+
                             {varianceCount["total_colors"] ? (
                                 <div className="p-3 text-dark shadow-sm rounded d-flex justify-content-between align-items-center"
                                 style={{backgroundColor: '#E7DDFF'}}>
+                                    <FaPalette className="fs-2"/>
                                     <div>
                                         <span className="fs-5">Total Colours</span><br />
                                         <span className="fs-3">{varianceCount["total_colors"]}</span>
                                     </div>
-                                    <FaPalette className="fs-2"/>
+                                    {isCollapsedColour? <FaChevronUp className="fs-4"/>: <FaChevronDown className="fs-4"/>}
+
                                 </div>
                             ) : (
                                 varianceCountError && (
@@ -522,16 +545,31 @@ function FigureData(){
                                     </div>
                                 )
                             )}
+                        <div className="collapse mt-2" id="colourDetails">
+                            <div className="card card-body">
+                                Three highest colour
+                                <ol>
+                                    {Object.entries(topColour).map(([color, count], index) => (
+                                        <li key={index}>
+                                            {color} : {count}
+                                        </li>
+                                    ))}
+                                </ol>
+                            </div>
                         </div>
-                        <div className="col-md-3">
+                        </div>
+                        <div className="col-md-3"
+                        data-bs-toggle="collapse" data-bs-target="#brandDetails" aria-expanded="false" aria-controls="brandDetails" onClick={handleBrandToggle}>
                             {varianceCount["total_brands"] ? (
                                 <div className="p-3 text-dark shadow-sm rounded d-flex justify-content-between align-items-center"
                                 style={{backgroundColor: '#FFECA1'}}>
+                                    <FaTags className="fs-2"/>
                                     <div>
                                         <span className="fs-5">Total Brands</span><br />
                                         <span className="fs-3">{varianceCount["total_brands"]}</span>
                                     </div>
-                                    <FaTags className="fs-2"/>
+                                    {isCollapsedBrand? <FaChevronUp className="fs-4"/>: <FaChevronDown className="fs-4"/>}
+
                                 </div>
                             ) : (
                                 varianceCountError && (
@@ -540,16 +578,30 @@ function FigureData(){
                                     </div>
                                 )
                             )}
+                        <div className="collapse mt-2" id="brandDetails">
+                            <div className="card card-body">
+                                Three highest brand
+                                <ol>
+                                    {Object.entries(topBrand).map(([brand, count], index) => (
+                                        <li key={index}>
+                                            {brand} : {count}
+                                        </li>
+                                    ))}
+                                </ol>
+                            </div>
                         </div>
-                        <div className="col-md-3">
+                        </div>
+                        <div className="col-md-3"
+                        data-bs-toggle="collapse" data-bs-target="#countryDetails" aria-expanded="false" aria-controls="countryDetails" onClick={handleCountryToggle}>
                             {varianceCount["total_countries"] ? (
                                 <div className="p-3 text-dark shadow-sm rounded d-flex justify-content-between align-items-center"
                                 style={{backgroundColor: '#EFC3CA'}}>
+                                    <FaGlobe className="fs-2"/>
                                     <div>
                                         <span className="fs-5">Total Countries</span><br />
                                         <span className="fs-3">{varianceCount["total_countries"]}</span>
                                     </div>
-                                    <FaGlobe className="fs-2"/>
+                                    {isCollapsedCountry? <FaChevronUp className="fs-4"/>: <FaChevronDown className="fs-4"/>}
                                 </div>
                             ) : (
                                 varianceCountError && (
@@ -558,16 +610,31 @@ function FigureData(){
                                     </div>
                                 )
                             )}
+                        <div className="collapse mt-2" id="countryDetails">
+                            <div className="card card-body">
+                                Three highest country
+                                <ol>
+                                    {Object.entries(topCountry).map(([brand, count], index) => (
+                                        <li key={index}>
+                                            {brand} : {count}
+                                        </li>
+                                    ))}
+                                </ol>
+                                
+                            </div>
                         </div>
-                        <div className="col-md-3">
+                        </div>
+                        <div className="col-md-3"
+                        data-bs-toggle="collapse" data-bs-target="#sizeDetails" aria-expanded="false" aria-controls="sizeDetails" onClick={handleSizeToggle}>
                             {varianceCount["total_sizes"] ? (
                                 <div className="p-3 text-dark shadow-sm rounded d-flex justify-content-between align-items-center"
                                 style={{backgroundColor: '#98F5F9'}}>
+                                    <FaRulerCombined className="fs-2"/>
                                     <div>
                                         <span className="fs-5">Total Sizes</span><br />
                                         <span className="fs-3">{varianceCount["total_sizes"]}</span>
                                     </div>
-                                    <FaRulerCombined className="fs-2"/>
+                                    {isCollapsedSize? <FaChevronUp className="fs-4"/>: <FaChevronDown className="fs-4"/>}
                                 </div>
                             ) : (
                                 varianceCountError && (
@@ -576,6 +643,18 @@ function FigureData(){
                                     </div>
                                 )
                             )}
+                        <div className="collapse mt-2" id="sizeDetails">
+                            <div className="card card-body">
+                                Top three size
+                                <ol>
+                                    {Object.entries(topSize).map(([size, count], index) => (
+                                        <li key={index}>
+                                            {size} : {count}
+                                        </li>
+                                    ))}
+                                </ol>
+                            </div>
+                        </div>
                         </div>
                     </div>
                 </div>
