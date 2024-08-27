@@ -32,6 +32,7 @@ function FigureData(){
     const chartInstanceRef3 = useRef(null); 
     const lineChartInstanceRef4 = useRef(null);
 
+    // chevron
     const [isCollapsedGarment, setIsCollapsedGarment] = useState(false);
     const handleGarmentToggle = () => {
         setIsCollapsedGarment(!isCollapsedGarment);
@@ -116,35 +117,35 @@ function FigureData(){
                 setVarianceCountError(error);
             }
             
-            let categoryURL = ApiConstant.GarmentByCategory;
-            try{
-                let response = await fetch(categoryURL, header);
-                if (response.status == 200){
-                    let r = await response.json();
-                    console.log(r.result);
-                    if (r.result !== undefined) {
-                        countryChart(r.result['country']);
-                        brandChart(r.result['brand']);
-                        colourChart(r.result['colour']);
-                        sizeChart(r.result['size']);
-                        setTopColour(r.result['top_colour']);
-                        setTopSize(r.result['top_size']);
-                        setTopCountry(r.result['top_country']);
-                        setTopBrand(r.result['top_brand']);
-                    }
-                } else {
-                }
-            } catch (error){
-                alert('error')
-            }
+            // let categoryURL = ApiConstant.GarmentByCategory;
+            // try{
+            //     let response = await fetch(categoryURL, header);
+            //     if (response.status == 200){
+            //         let r = await response.json();
+            //         console.log(r.result);
+            //         if (r.result !== undefined) {
+            //             countryChart(r.result['country']);
+            //             brandChart(r.result['brand']);
+            //             colourChart(r.result['colour']);
+            //             sizeChart(r.result['size']);
+            //             setTopColour(r.result['top_colour']);
+            //             setTopSize(r.result['top_size']);
+            //             setTopCountry(r.result['top_country']);
+            //             setTopBrand(r.result['top_brand']);
+            //         }
+            //     } else {
+            //     }
+            // } catch (error){
+            //     alert('error')
+            // }
         }
     }
 
     function getRandomHexColor() {
-        const letters = '0123456789ABCDEF';
+        const letters = '89ABCDEF';
         let color = '#';
         for (let i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
+            color += letters[Math.floor(Math.random() * 8)];
         }
         return color;
     }
@@ -167,7 +168,7 @@ function FigureData(){
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: "# of Garment",
+                        labels: "",
                         data: datas,
                         backgroundColor: backgroundColor,
                         borderColor: '#FDDFFF',
@@ -177,17 +178,26 @@ function FigureData(){
                 },
                 options: {
                     responsive: true,
+                    plugins: {
+                        title:{
+                            display: true,
+                            text:"Distribution of Total Garment by Country",
+                            font:{
+                                size: 18
+                            }
+                        }
+                    },
                     scales: {
                         x: {
                             title: {
                                 display: true,
-                                text: 'Date'
+                                text: 'Country'
                             }
                         },
                         y: {
                             title: {
                                 display: true,
-                                text: 'Count'
+                                text: 'Total garment'
                             },
                             ticks: {
                                 stepSize: 1
@@ -217,7 +227,7 @@ function FigureData(){
             data: {
                 labels: labels,
                 datasets: [{
-                    label: "# of Garment",
+                    label: "",
                     data: datas,
                     backgroundColor: backgroundColor,
                     borderColor: '#FDDFFF',
@@ -227,17 +237,26 @@ function FigureData(){
             },
             options: {
                 responsive: true,
+                plugins: {
+                    title:{
+                        display: true,
+                        text:"Distribution of Total Garment by Brand",
+                        font:{
+                            size: 18
+                        }
+                    }
+                },
                 scales: {
                     x: {
                         title: {
                             display: true,
-                            text: 'Date'
+                            text: 'Brand'
                         }
                     },
                     y: {
                         title: {
                             display: true,
-                            text: 'Count'
+                            text: 'Total garment'
                         },
                         ticks: {
                             stepSize: 1
@@ -269,7 +288,7 @@ function FigureData(){
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: "# of Garment",
+                        label: "",
                         data: datas,
                         backgroundColor: colourMapping,
                         borderColor: '#FDDFFF',
@@ -279,17 +298,26 @@ function FigureData(){
                 },
                 options: {
                     responsive: true,
+                    plugins: {
+                        title:{
+                            display: true,
+                            text:"Distribution of Total Garment by Colour",
+                            font:{
+                                size: 18
+                            }
+                        }
+                    },
                     scales: {
                         x: {
                             title: {
                                 display: true,
-                                text: 'Date'
+                                text: 'Colour'
                             }
                         },
                         y: {
                             title: {
                                 display: true,
-                                text: 'Count'
+                                text: 'Total garment'
                             },
                             ticks: {
                                 stepSize: 1
@@ -319,7 +347,7 @@ function FigureData(){
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: "# of Garment",
+                        label: "",
                         data: datas,
                         backgroundColor: backgroundColor,
                         borderColor: '#FDDFFF',
@@ -329,17 +357,26 @@ function FigureData(){
                 },
                 options: {
                     responsive: true,
+                    plugins: {
+                        title:{
+                            display: true,
+                            text:"Distribution of Total Garment by Size",
+                            font:{
+                                size: 18
+                            }
+                        }
+                    },
                     scales: {
                         x: {
                             title: {
                                 display: true,
-                                text: 'Date'
+                                text: 'Size'
                             }
                         },
                         y: {
                             title: {
                                 display: true,
-                                text: 'Count'
+                                text: 'Total garment'
                             },
                             ticks: {
                                 stepSize: 1
@@ -392,7 +429,7 @@ function FigureData(){
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: "# of Garment",
+                        label: "",
                         data: numbers,
                         backgroundColor: backgroundColor,
                         borderColor: '#FDDFFF',
@@ -412,7 +449,7 @@ function FigureData(){
                         y: {
                             title: {
                                 display: true,
-                                text: 'Count'
+                                text: 'Number of garment'
                             },
                             ticks: {
                                 stepSize: 1
@@ -427,11 +464,28 @@ function FigureData(){
         }
         
     }
+
+    function getLuminance(hexColor) {
+        // Convert hex to RGB
+        const rgb = parseInt(hexColor.slice(1), 16); 
+        const r = (rgb >> 16) & 0xff;
+        const g = (rgb >>  8) & 0xff;
+        const b = (rgb >>  0) & 0xff;
+    
+        // Calculate luminance
+        const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        return luma;
+    }
+
+    const capitalizeFirstLetter = (string) => {
+        if (!string) return '';
+        return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+    };
     
     //  [] to show only run once
     useEffect(() => {
         getTotalUserNumber();
-        durationChart(1);
+        // durationChart(1);
 
         return () => {
             if (chartInstanceRef.current) {
@@ -471,7 +525,7 @@ function FigureData(){
                                         <span className="fs-5">Total Users</span><br />
                                         <span className="fs-2">{totalUser['total_user']}</span>
                                     </div>
-                                    <span className="fs-3">{totalUser['growth_rate']} %</span>
+                                    {isCollapsedUser ? <FaChevronUp className="fs-4"/>: <FaChevronDown className="fs-4"/>}
                                 </div>
                             ) : (
                                 totalUserError && (
@@ -481,19 +535,42 @@ function FigureData(){
                                 )
                             )}
                             <div className="collapse mt-2" id="userDetails">
-                                <div className="card card-body">
+                                <div className="card card-body" style={{ maxHeight: '300px', overflowY: 'auto'}}>
                                     {
                                         totalUser['growth_rate'] === 0 ? (
                                             <span>There is no increase or decrease of user in this month</span>
                                         ) : totalUser['growth_rate'] > 0 ? (
-                                            <span>There is total increase of {totalUser['growth_rate']}%</span>
+                                            <>
+                                                <span>There is total increase of {totalUser['growth_rate']}% new users compared to last month.</span>
+                                                <span className="fs-2" style={{color: 'green', fontWeight: 'bold'}}>+ {totalUser['growth_rate']} %</span>
+                                            </>
                                         ) : (
-                                            <span>There is drop of {totalUser['growth_rate']}% for our new user</span>
+                                            <>
+                                                <span>There is drop of {totalUser['growth_rate']}% for our new user</span>
+                                                <span className="fs-2" style={{color: 'red', fontWeight: 'bold'}}>- {totalUser['growth_rate']} %</span>
+                                            </>
+
                                         )
                                     }
+                                    {/* to display the name of user */}
+                                    <h5>User Name List</h5>
+                                    <ol>
+                                    {(() => {
+                                            const items = [];
+                                            for (let i = 0; i < totalUser['total_user']; i++) {
+                                                if (i < totalUser['user_list'].length) {
+                                                    items.push(
+                                                        <li key={i}>{totalUser['user_list'][i]}</li>
+                                                    );
+                                                }
+                                            }
+                                            return items;
+                                        })()}
+                                    </ol>
                                 </div>
                             </div>
                         </div>
+
                         {/* garment detail */}
                         <div className="col-md-6" 
                         data-bs-toggle="collapse" data-bs-target="#garmentDetails" aria-expanded="false" aria-controls="garmentDetails" onClick={handleGarmentToggle}>
@@ -515,8 +592,41 @@ function FigureData(){
                                 )
                             )}
                             <div className="collapse mt-2" id="garmentDetails">
-                                <div className="card card-body">
+                                <div className="card card-body" style={{ maxHeight: '300px', overflowY: 'auto'}}>
                                     Total number of new garment in this month: {varianceCount['new_garment_month']}
+                                    <table className="table mt-1 border">
+                                        <thead >
+                                            <tr>
+                                            <td style={{backgroundColor: '#F0DEFE'}}>Name</td>
+                                            <td style={{backgroundColor: '#F0DEFE'}}>Manufacturing Country</td>
+                                            <td style={{backgroundColor: '#F0DEFE'}}>Colour</td>
+                                            <td style={{backgroundColor: '#F0DEFE'}}>Brand</td>
+                                            <td style={{backgroundColor: '#F0DEFE'}}>Size</td>
+                                            <td style={{backgroundColor: '#F0DEFE'}}>Owner</td>
+
+                                            </tr>
+
+                                        </thead>
+                                        <tbody>
+                                            {(() => {
+                                                const items = [];
+                                                for (let i = 0; i < varianceCount['total_garments']; i++) {
+                                                    items.push(
+                                                        <tr key={i}>
+                                                            <td>{varianceCount['garment_list'][i]['garment_name']}</td>
+                                                            <td>{capitalizeFirstLetter(varianceCount['garment_list'][i]['garment_country'])}</td>
+                                                            <td>{capitalizeFirstLetter(varianceCount['garment_list'][i]['garment_colour'])}</td>
+                                                            <td>{capitalizeFirstLetter(varianceCount['garment_list'][i]['garment_brand'])}</td>
+                                                            <td>{varianceCount['garment_list'][i]['garment_size']}</td>
+                                                            <td>{varianceCount['garment_list'][i]['user']}</td>
+                                                        </tr>
+                                                    );
+                                                }
+                                                return items;
+                                            })()}
+                                        </tbody>
+                                       
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -526,7 +636,6 @@ function FigureData(){
                         {/* colour details */}
                         <div className="col-md-3"
                         data-bs-toggle="collapse" data-bs-target="#colourDetails" aria-expanded="false" aria-controls="colourDetails" onClick={handleColourToggle}>
-
                             {varianceCount["total_colors"] ? (
                                 <div className="p-3 text-dark shadow-sm rounded d-flex justify-content-between align-items-center"
                                 style={{backgroundColor: '#E7DDFF'}}>
@@ -545,19 +654,40 @@ function FigureData(){
                                     </div>
                                 )
                             )}
-                        <div className="collapse mt-2" id="colourDetails">
-                            <div className="card card-body">
-                                Three highest colour
-                                <ol>
-                                    {Object.entries(topColour).map(([color, count], index) => (
-                                        <li key={index}>
-                                            {color} : {count}
-                                        </li>
-                                    ))}
-                                </ol>
+                            <div className="collapse mt-2" id="colourDetails">
+                                <div className="card card-body">
+                                    <div className="container">
+                                    Three highest colour
+                                        {Object.entries(topColour).map(([color, count], index) => {
+                                            const colorIndex = colour_name.indexOf(color.toUpperCase());
+                                            const backgroundColour = colorIndex !== -1 ? colour_code[colorIndex] :"#ffffff";
+                                            const textColour = getLuminance(backgroundColour) < 130 ? "#ffffff" : "#000000";
+                                            return (
+                                                <div className="card card-body m-1 shadow" key={index} 
+                                                style={{backgroundColor :backgroundColour, color: textColour}}>
+                                                    {color} : {count}
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                    <div className="container mt-2">
+                                        List of Colours
+                                        <ol>
+                                            {
+                                                (() => {
+                                                    const items = [];
+                                                    for (let i = 0; i< varianceCount['total_colors']; i++){
+                                                        items.push(<li key={i}>{capitalizeFirstLetter(varianceCount["colour_list"][i])}</li>);
+                                                    }
+                                                    return items;
+                                                })()
+                                            }
+                                        </ol>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        </div>
+                       {/* brand details */}
                         <div className="col-md-3"
                         data-bs-toggle="collapse" data-bs-target="#brandDetails" aria-expanded="false" aria-controls="brandDetails" onClick={handleBrandToggle}>
                             {varianceCount["total_brands"] ? (
@@ -580,14 +710,31 @@ function FigureData(){
                             )}
                         <div className="collapse mt-2" id="brandDetails">
                             <div className="card card-body">
-                                Three highest brand
-                                <ol>
-                                    {Object.entries(topBrand).map(([brand, count], index) => (
-                                        <li key={index}>
-                                            {brand} : {count}
-                                        </li>
-                                    ))}
-                                </ol>
+                                <div className="container">
+                                    Three highest brand
+                                    <ol>
+                                        {Object.entries(topBrand).map(([brand, count], index) => (
+                                            <li key={index} className="mb-3">
+                                                <img src={"/src/assets/" + brand + ".jpg"} style={{width: '65px'}}></img> : {count}
+                                                
+                                            </li>
+                                        ))}
+                                    </ol>
+                                </div>
+                                <div className="container">
+                                    List of Brands
+                                    <ol>
+                                        {
+                                            (()=>{
+                                                const items = [];
+                                                for(let i = 0;i<varianceCount['total_brands']; i++){
+                                                    items.push(<li key={i}>{capitalizeFirstLetter(varianceCount['brand_list'][i])}</li>)
+                                                }
+                                                return items;
+                                            })()
+                                        }
+                                    </ol>
+                                </div>
                             </div>
                         </div>
                         </div>
@@ -612,15 +759,31 @@ function FigureData(){
                             )}
                         <div className="collapse mt-2" id="countryDetails">
                             <div className="card card-body">
-                                Three highest country
-                                <ol>
-                                    {Object.entries(topCountry).map(([brand, count], index) => (
-                                        <li key={index}>
-                                            {brand} : {count}
-                                        </li>
-                                    ))}
-                                </ol>
-                                
+                                <div className="container">
+                                    Three highest country
+                                    <ol>
+                                        {Object.entries(topCountry).map(([country, count], index) => (
+                                            <li key={index} className="mb-3">
+                                                {country} : {count} &nbsp;
+                                                <img src={"/src/assets/" + country + ".jpg"} style={{width: '80px'}}></img>
+                                            </li>
+                                        ))}
+                                    </ol>
+                                </div>
+                                <div className="container">
+                                    List of Manufacturing Countries
+                                    <ol>
+                                        {
+                                            (()=>{
+                                                const items = [];
+                                                for(let i = 0;i<varianceCount['total_countries']; i++){
+                                                    items.push(<li key={i}>{capitalizeFirstLetter(varianceCount['country_list'][i])}</li>)
+                                                }
+                                                return items;
+                                            })()
+                                        }
+                                    </ol>
+                                </div>
                             </div>
                         </div>
                         </div>
@@ -645,14 +808,30 @@ function FigureData(){
                             )}
                         <div className="collapse mt-2" id="sizeDetails">
                             <div className="card card-body">
-                                Top three size
-                                <ol>
-                                    {Object.entries(topSize).map(([size, count], index) => (
-                                        <li key={index}>
-                                            {size} : {count}
-                                        </li>
-                                    ))}
-                                </ol>
+                                <div className="container">
+                                    Top three size
+                                    <ol>
+                                        {Object.entries(topSize).map(([size, count], index) => (
+                                            <li key={index}>
+                                                {size} : {count}
+                                            </li>
+                                        ))}
+                                    </ol>
+                                </div>
+                                <div className="container">
+                                    List of Sizes
+                                    <ol>
+                                        {
+                                            (() => {
+                                                const items = [];
+                                                for (let i = 0; i< varianceCount['total_sizes']; i++){
+                                                    items.push(<li key={i}>{varianceCount['sizes_list'][i]}</li>);
+                                                }
+                                                return items;
+                                            })()
+                                        }
+                                    </ol>
+                                </div>
                             </div>
                         </div>
                         </div>
@@ -660,7 +839,7 @@ function FigureData(){
                 </div>
             </div>
 
-            {/* display the piechart */}
+            {/* display the bar chart */}
             <div className="card m-3 shadow">
                 <div className="card-body">
                     <div className="row justify-content-center">
@@ -697,9 +876,9 @@ function FigureData(){
                     <div className="d-flex justify-content-center mt-3">
                         {durationString && (
                             <span>
-                                {durationString === 1 ? "Number of garment in one week" :
-                                durationString === 2 ? "Number of garment in two weeks" :
-                                durationString === 3 ? "Number of garment in one month" : ""}
+                                {durationString === 1 ? "Number of garment registered in one week" :
+                                durationString === 2 ? "Number of garment registered in two weeks" :
+                                durationString === 3 ? "Number of garment registered per month" : ""}
                             </span>
                         )}
                     </div>
